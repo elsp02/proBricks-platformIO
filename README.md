@@ -1,0 +1,215 @@
+# Modular Mechatronic Smart-Brick System for Tangible Learning in Special Education
+Repository accompanying the Bachelor thesis:
+
+**Design and Development of a Tangible Learning System for Special Education**
+
+Elena Spitzer  
+University of Applied Sciences Augsburg  
+Faculty of Electrical Engineering  
+Creative Engineering  
+2026  
+
+## Overview
+This repository contains the prototype developed as part of the Bachelor thesis and investigates a modular, brick-based tangible learning game that combines the haptic and spatial qualities of physical construction materials with digital task presentation, construction detection and feedback. Learners select a three-dimensional target structure in a browser-based application and reproduce it using electronically connected building bricks. The system was designed to create opportunities for spatial thinking, action planning, problem-solving and increasingly independent learning while allowing task complexity and assistance to be adapted to individual needs. 
+
+The system consists of three main components:
+
+- **Active building bricks** that form the physical construction
+- **A baseplate** that serves as the root of the construction
+- **A learning application** that reconstructs the detected construction digitally
+
+<center>
+<img src="figures/bricks-and-visualization.jpg" alt="bricks and visualization" style="width: 50%;">
+</center>
+
+## Repository Structure
+
+```text
+.
+├── README.md
+│
+├── docs/
+│   ├── architecture.md
+│   ├── communication-protocol.md
+│   ├── feedback.md
+│   ├── hardware.md
+│   ├── language_c.md
+│
+├── figures/
+│
+├── firmware/
+│   ├── include/
+│   └── src/
+│        ├── lib/
+│        ├── firmware_test/
+│        └── state_machine/
+│         ├── baseplate_state_machine_debug.cpp
+│         ├── baseplate_state_machine2.cpp
+│         └── cube_state_machine.cpp
+│
+├── software/
+│   └── threejs_visualization/
+│     ├── backend/
+│     └── frontend/
+│
+└── hardware/
+    ├── pcb_files/
+    └── CAD_files/
+
+```
+
+|Directory | Description |
+|:--|:--|
+| `docs/` | Technical documentation of the developed system |
+| `firmware/` | Embedded firmware for the building bricks and the baseplate |
+| `software/threejs_visualization/backend` | Python backend for communication and construction processing |
+| `software/threejs_visualization/frontend` | Browser-based learning application and 3D visualisation |
+| `hardware` | Electronic and mechanical design files
+
+## Documentation
+Detailed technical documentation is provided separately: 
+- [System Architecuture](docs/system_architecture.md): Overall system structure, component responsibilities, software architecture and data processing
+- [Communication Protocol](docs/communication_protocol.md): Communication interfaces, message formats, communication sequences (and error and timeout handling)
+- [Hardware](docs/hardware.md): Mechanical and electronic implementation of the building bricks and baseplate
+
+Addtional information regarding the feedback output and visualisation is provided in [Feedback and Visualisation](docs/feedback.md).
+
+Firmware and Software Folders do also have additional README files [Firmware README](firmware/README.md), [Software README](software/README.md), as well as the backend [backend README](software/threejs_visualization/backend/README.md) 
+and the frontend [frontend README](software/threejs_visualization/frontend/README.md)
+
+(Furthermore, the bachelor thesis includes the complete design rationale, theoretical background, requirement analysis, implementation details and evaluation.)
+
+
+## Requirements
+to operate the complete physical prototype, the following hard- and software is required:
+
+### Prototype Hardware
+The building bricks and baseplate both include an ATtiny1616 and are custom developed components. Their mechanical and electronic design files are included in this repository in the [hardware](hardware/) and explained in [Hardware](docs/hardware.md)
+
+### Additional Hardware
+- 2× USB-to-TTL UART adapter (CH340/CH340G-based)
+  - one modified with a TX/RX diode, used as UPDI programmer (jtag2updi)
+  - one unmodified, used for host–baseplate UART communication and 5V supply
+- host computer
+- USB connection for 5V power supply
+
+The prototype was programmed using the jtag2updi-compatible programmer.
+Setup instructions are available in the
+[jtag2updi documentation](https://github.com/SpenceKonde/AVR-Guidance/blob/master/UPDI/jtag2updi.md).
+
+### Software
+- [PlatformIO](https://platformio.org/)
+- [megaTinyCore](https://github.com/SpenceKonde/megaTinyCore) for ATtiny1616 support
+- Python 3.14
+- modern web browser
+
+**Python dependencies**:  
+- `pyserial` (UART communication, [binary_serial_reader.py](software/threejs_visualization/backend/binary_serial_reader.py))
+- `websockets` (backend WebSocket server, [ws_server.py](software/threejs_visualization/backend/ws_server.py))
+
+Python dependencies can be installed via:  
+```bash
+pip install -r software/threejs_visualization/backend/requirements_backend.txt
+```
+
+**Frontend dependencies** (in [software/threejs_visualization/frontend/package.json](software/threejs_visualization/frontend/package.json)):  
+- `three` (^0.185.1)  
+- `vite` (^8.1.2) — dev server / bundler
+
+Install with:  
+```bash
+cd software/threejs_visualization/frontend
+npm install
+```
+
+## Getting Started
+### 1. Clone the Repository
+git `clone https://github.com/elsp02/cubes-platformIO.git`  
+cd cubes-platformIO
+
+### 2. Flash the Brick and Baseplate Firmware
+for flashing use the modified USB-to-TTL UART adapter
+
+#### Brick Firmware
+the brick firmware is located in: [firmware/src/state_machine]  
+Compile the firmware and upload the ATtiny1616 using PlatformIO:  
+```bash
+pio run -e [uart_cube_state_machine]
+```
+
+```bash
+pio run -e [uart_cube_state_machine] -t upload
+```
+---
+#### Baseplate Firmware
+the baseplate firmware is located in: [firmware/src/state_machine]
+
+Compile the firmware and upload the ATtiny1616 using PlatformIO: 
+```bash
+pio run -e [uart_baseplate_state_machine]
+```
+
+```bash
+pio run -e [uart_baseplate_state_machine] -t upload
+```
+---
+#### Debugging
+ to run the baseplate standalone without a PC connection, cycling the predefined feedback patterns instead of PC-supplied data, flash the `[baseplate_state_machine_debug]` environment instead:
+ ```bash
+ pio run -e [baseplate_state_machine_debug]
+ ```
+
+### 3. Connect the Prototype
+1. Connect the baseplate to the host computer using the unmodified USB-to-TTL UART adapter
+2. ensure that the system is supplied with 5V
+3. Do not connect bricks to the baseplate yet
+For details about the physical and electronic interfaces, see the [Hardware Documentation](docs/hardware.md)
+
+### 4. Start the Backend
+Navigate to the backend directory:  
+```bash
+cd software/threejs_visualization/backend
+```
+Start the backend:
+```bash
+python ws_server.py
+```
+
+### 5. Start the Frontend
+Navigate to the frontend directory:
+```bash
+cd software/threejs_visualization/frontend
+```
+Start the frontend and open it in a web browser:
+```bash
+npm run dev
+```
+
+## Usage
+A typical construction task follows this sequence:
+1. Start the backend and frontend
+2. Select a target construction in the learning application
+3. Inspect and confirm the selected three-dimensional target
+4. Connect the first brick to the baseplate.
+5. Continue the building process by trying to reproduce the target structure 
+5. The system processes the current construction and updates the digital representation.
+6. Rearrange a brick if it is detected and visualised as incorrect
+7. Continue modifying the construction until the task is completed
+8. End the current session or return to the target selection
+
+The visualised feedback during the construction task inlcuding pyhsical and digital feedback and feedback states is explained in detail in the[Feedback Documentation](docs/feedback.md).
+
+## Prototype Status
+//baseplate flashed currently with uart_baseplate_sate_machine env of commit 9cc54fb7
+//cube flashed currently with uart_cube_state_machine env of commit 05d4e983
+
+This repository contains the proof-of-concept prototype developed for the Bachelor thesis. It is not a production-ready or certified educational product.
+
+Further information about the evaluation, requirement fulfilment and limitations is provided in the Bachelor thesis.
+
+## Version
+The version associated with the submitted Bachelor thesis is:
+Tag:    [main]  
+Commit: [FINAL_COMMIT]  
+
+Later commits may contain modifications that are not described in the submitted thesis.

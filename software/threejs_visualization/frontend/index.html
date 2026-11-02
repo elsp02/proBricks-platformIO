@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang=" de">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+        <title>BA CUBES</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        >
+        <link rel="stylesheet" href="https://unpkg.com/lenis@1.3.17/dist/lenis.css">
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <main>
+            
+                <section class="main-section" id="loader">
+                    <img id="loader-gif"
+                        src="img/gif/brick_loader.gif"
+                        alt=""
+                        width="470"
+                        height="470"
+                        decoding="async"
+                        >
+                        <p class="typo-title-section" id="status"></p>
+                </section>
+            <div class="main-container" id="dashboard">
+                <section class="header-footer-section" id="header-dashboard"></section>
+
+                <section class="main-section" id="selection">
+                    <div class="typo-title title-border">WÄHLE DEINE KONSTRUKTION</div>
+                    <div class="scroll-section ">
+                        <div class="scroll-container" id="scroll-container-dashboard">
+                            <!--<div class="card" id="card1">
+                                <img src="img/rec_h.svg" alt="karte1">
+                            </div>
+                            <div class="card" id="card2">
+                                <img src="img/rec_h.svg" alt="karte1">
+                            </div>
+                            <div class="card" id="card3">
+                                <img src="img/rec_h.svg" alt="karte1">
+                            </div>
+                            <div class="card" id="card4">
+                                <img src="img/rec_h.svg" alt="karte1">
+                            </div>-->
+                        </div>
+                    </div>
+                    <!-- one dot per card, filled in by tree_selection.js once cards exist -->
+                    <div class="dots-container" id="dots-container"></div>
+                    
+                </section>
+
+                <section class="overlay" id="preview-overlay">
+                    <section class="main-section" id="preview">
+                        <div class="tree-container" id="preview-tree">
+                            <div class="canvas" id="preview-canvas">
+                                <!--<img src="img/rec_h.svg">-->
+                            </div>
+                        </div>
+                        <!-- level selection currently unused - see tree_selection.js
+                        <div class="small-container-column" id="level-container">
+                            <div class="level" id="level1">level 1</div>
+                            <div class="level" id="level1">level 2</div>
+                        </div>
+                        -->
+                        <div class="small-container-row" id="button-container">
+                            <div class="button kreuz" id="zurück-button">
+                                <img src="img/kreuz.png">
+                            </div>
+                                <div class="button haken" id="ok-button">
+                                    <img src="img/haken.png">
+                                </div>
+                        </div>
+                    </section>
+                </section>
+
+                <section class="header-footer-section" id="footer-dashboard">
+
+                </section>
+            </div>
+        </main>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+        <script type="module" src="./src/animation/loader_page.js"></script>
+        <script type="module" src="./src/visualization/dashboard/tree_thumbnail.js"></script>
+        <script type="module" src="./src/ui/tree_selection.js"></script>
+    </body>

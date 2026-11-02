@@ -1,0 +1,100 @@
+// =====================================================================
+// cube_hardware.cpp
+// - defines the upstream (orientation) and child (downstream) wire
+//   ports for each brick type, selected via the CUBE_TYPE_* build flag in plaftormIO.ini
+//
+// - baseplate: no upstream ports
+// =====================================================================
+
+#include "cube_hardware.h"
+
+#include "config.h"
+#include "cube_identity.h"
+
+// ----------------------------------------------------------
+// Upstream (Orientation) Ports
+// - docking-face contacts used to detect relative orientation to the parent
+// -> not included in baseplate
+// ----------------------------------------------------------
+#if defined(CUBE_TYPE_BASEPLATE)
+
+const wire_t upstream[] = {};  // baseplate is the tree root, no orientation lines
+
+#else
+
+const wire_t upstream[] = {
+    { &PORTA, PIN1_bm, 1 },     // PA1 — orientation 0
+    { &PORTA, PIN2_bm, 2 },     // PA2 — orientation 1
+    { &PORTA, PIN6_bm, 6 },     // PA6 — orientation 2
+    { &PORTA, PIN7_bm, 7 },     // PA7 — orientation 3
+};
+
+#endif
+
+const int upstream_count = sizeof(upstream) / sizeof(upstream[0]);
+
+
+// ----------------------------------------------------------
+// Child (Downstream) Ports
+// - receiving-face contacts, one port set per brick type
+// ----------------------------------------------------------
+#if defined(CUBE_TYPE_NORMAL)
+
+static const wire_t child_0 = { &PORTC, PIN3_bm, 3 };  // PCB Port Out1
+static const wire_t child_1 = { &PORTA, PIN3_bm, 3 };  // PCB Port Out2
+static const wire_t child_2 = { &PORTA, PIN4_bm, 4 };  // PCB Port Out3
+static const wire_t child_3 = { &PORTA, PIN5_bm, 5 };  // PCB Port Out4
+static const wire_t child_4 = { &PORTB, PIN1_bm, 1 };  // PCB Port Out5
+
+const wire_t *const children[] = {
+    &child_0,
+    &child_1,
+    &child_2,
+    &child_3,
+    &child_4,
+};
+
+#elif defined(CUBE_TYPE_SMASHED)
+static const wire_t child_0 = { &PORTC, PIN3_bm, 3 }; //PCB Port Out1
+
+const wire_t *const children[] = {
+    &child_0
+};
+
+#elif defined(CUBE_TYPE_PYRAMID)
+static const wire_t child_0 = { &PORTC, PIN3_bm, 3 }; //PCB Port Out1
+static const wire_t child_1 = { &PORTB, PIN1_bm, 1 }; //PCB Port Out2
+
+const wire_t *const children[] = {
+    &child_0,
+    &child_1,
+};
+
+#elif defined(CUBE_TYPE_BASEPLATE)
+
+static const wire_t child_0 = { &PORTB, PIN1_bm, 1 };  // only child port of the baseplate
+
+const wire_t *const children[] = {
+    &child_0,
+};
+
+#endif
+
+
+const uint8_t child_count =
+    sizeof(children) / sizeof(children[0]);
+
+
+// release_all_lines
+// - releases every upstream and child line (idle/HIGH)
+// problem: baseplate hat keine upstream ports -> vlt fkt einfach trennen?
+void release_all_lines(void){
+    for (uint8_t line = 0; line < upstream_count; line ++){
+        wire_release(&upstream[line]);
+    }
+
+    for (uint8_t line = 0; line < child_count; line ++){
+        wire_release(children[line]);
+    }
+}
+

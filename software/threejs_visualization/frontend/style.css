@@ -1,0 +1,454 @@
+:root{
+    --font-family: "Inter", Arial, sans-serif;
+
+    --fs-title: 2rem;
+    --fw-title: 700;
+    --fs-title-section: 1.5rem;
+    --fs-text: 1rem;
+    --fw-text: 400;
+    --fw-text-bold: 600; /*bold*/
+
+
+    /* Special Effects
+    --stroke-thin: 0.1px; */
+
+    /* Colors */
+    --font-color: #323131;
+    --font-color-light: #fdfdfd; 
+    --background-color: #c3c2bc;
+    --background-color-loading: #ffdb53;
+    --background-color-loading2: #f0f4f5;
+    --green: #868656;
+    --light-green: #DBDBB6;
+    --red: #5C2B2B;
+    --blue: #4E5F83;
+
+    /* Spacing */
+    --page-padding: clamp(1.25rem, 5vw, 2rem);
+    --img-overlap: clamp(1.25rem, 5vw, 3rem);
+    --overlap: clamp(24px, 8vw, 120px);
+
+
+    /*images*/
+    --img-h: clamp(250px, 60vw, 450px); /* image width */
+    --img-r: 3/4; /* image aspect ratio */
+    --img-border: 8px;
+    --stage-overlap: calc((var(--fs-title) * 0.65));
+    }
+
+     *{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    }
+
+    body {
+        /*background-color: var(--background-color);*/
+        font-family: var(--font-family);
+        font-weight: var(--fw-text);
+        font-size: var(--fs-text);
+        text-align: center;
+        color: var(--font-color);
+        overflow-x: hidden; /*clip: verhindert horizontales scrollen, wenn Elemente über die Seite hinausragen*/
+        width: 100%;
+        background-color: var(--background-color-loading);
+        height: 100vh;
+    }
+
+    .typo-title {
+        font-size: var(--fs-title);
+        font-weight: var(--fw-title);
+        color: var(--font-color-light);
+        background-color: lightcoral;
+        align-self: center;
+        width: 80%;
+    }
+
+    .title-border{
+        background-color: #5377FF;
+        border: 2px solid #5377FF;
+        border-radius: 0.8rem;
+        padding: 0.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .typo-title-section{
+        font-size: var(--fs-title-section);
+        font-weight: var(--fw-title);
+    }
+
+    .typo-text{
+        background-color: #807f7f;
+    }
+
+    .typo-text-bold{
+        font-weight: var(--fw-text);
+    }
+
+/*-------------------*/
+.main-container{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    overflow-x: hidden;
+    background-color: var(--background-color-loading);
+    padding-inline: var(--page-padding);
+    padding-block: var(--page-padding);
+}
+
+#dashboard{
+    opacity:0
+}
+
+/* live_build.html starts invisible under the loader and is faded in by
+   hideLoader() in loader_live_build.js once the websocket is connected */
+#live-build{
+    opacity:0
+}
+
+.main-section{
+    position: relative;
+    height: fit-content;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    /*background-color: #5C2B2B;*/
+}
+
+.small-container-row{
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    /*background-color: #868656;*/
+
+}
+
+.small-container-column{
+    width: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    /*background-color: #868656;*/
+    gap: calc(var(--page-padding)*0.5);
+}
+
+.header-footer-section{
+    flex-shrink: 0;
+    height: 40px;
+    /*background-color: rgb(221, 223, 224);*/
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+#selection{
+    width: 100%;
+    height: fit-content;
+    /*background-color: #868656;*/
+}
+
+.level{
+    background-color: var(--background-color-loading);
+    border:1px solid var(--background-color-loading);
+    border-radius: 0.5rem;
+}
+
+.level:hover{
+    background-color: #d1b345;
+    border:1px solid #d1b345;
+    cursor: pointer;
+}
+
+.level.active{
+    background-color: #d1b345;
+    border:1px solid #d1b345;
+    cursor: pointer;
+}
+
+.button{
+    /*background-color: #d6d62f;*/
+    max-width: 40px;
+    min-width: 20px;
+}
+
+.button img{
+    display: flex;
+    width: 100%; /* This will scale the image according to the website size */
+    height: auto; /* This will maintain the aspect ratio of the image */
+    margin: 0 auto; /* Center the image */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effect */
+}
+
+.haken:hover img{
+    content: url('img/haken_hover.png');
+}
+
+.kreuz:hover img{
+    content: url('img/kreuz_hover.png');
+}
+
+/*--------------------------------
+loader---------------------------*/
+#loader{
+    position: fixed;
+    inset:0;
+    z-index:999;
+    height: 100%;
+    background-color: var(--background-color-loading);
+}
+
+/*---------------------------------
+scroll section -------------------*/
+.scroll-section{
+    position: relative;
+    width: 100%;
+    height: fit-content;
+    overflow-x: hidden;
+    /*background-color: #807f7f;*/
+}
+
+.scroll-container{
+    display: flex;
+    flex-direction: row;
+    height: fit-content;
+    width: 100%;
+    gap: 1.5rem;
+    /*background-color: rgb(160, 170, 170);*/
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-behavior: smooth;
+    touch-action: pan-x;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    justify-content: flex-start; /* default: links starten */
+}
+
+/* Wenn alles reinpasst -> zentrieren */
+.scroll-container.is-centered{
+    justify-content: center;
+    }
+
+.card {
+    /*background-color: turquoise;*/
+    width: fit-content;
+    display: flex;
+    flex-direction: column;
+    scroll-snap-align: center;
+    }
+
+.card img {
+    height: var(--img-h);
+    object-fit: contain;
+    display: block;
+    border-radius: var(--img-border);
+    /*background-color: lightpink;*/
+}
+
+.horizontal img{
+    height: calc(var(--img-h)*0.8);
+    }
+
+.dots-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-top: 1rem;
+    /*background-color: #d6882f;*/
+    }
+
+.dot {
+    width: 0.7rem;
+    height: 0.7rem;
+
+    flex-shrink: 0;
+    padding: 0;
+    border: none;
+    border-radius: 999px;
+
+    background-color:  #7c7979;
+    cursor: pointer;
+
+    transition:
+        width 0.35s ease,
+        background-color 0.35s ease;
+}
+
+.dot.is-active {
+    width: 1.5rem;
+    background-color: #555151;
+    }
+/*---------------------------------
+preview----------------------------*/
+.overlay{
+    position: fixed;
+    display: none;
+    inset: 0;
+    z-index: 500;
+
+    justify-content: center;
+    align-items: center;
+
+    padding: var(--page-padding);
+
+    background-color: rgba(0, 0, 0, 0.45);
+
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.overlay.is-open {
+    display: flex;
+}
+
+#preview,
+#end-dialog{
+    width: 70%;
+    background-color: #acabaa;
+    border:2px solid #acabaa;
+    border-radius: 1rem;
+    padding-inline: var(--page-padding);
+    padding-block: var(--page-padding);
+    gap: var(--page-padding);
+}
+
+.hidden{
+    display: none;
+}
+
+/* single remaining button (allowCancel: false) - center it instead of
+   the space-between layout meant for two buttons */
+#end-button-container.center{
+    justify-content: center;
+}
+
+/*-------------------------------------
+tree---------------------------------*/
+.tree-container{
+    /*background-color: #fbfaf2;*/
+    width: 100%;
+    height: fit-content;
+    
+}
+
+.canvas{
+    background-color: #868656;
+    /*border:2px solid var(--font-color);*/
+    border-radius: 1rem;
+}
+
+#preview-canvas{
+    width: 100%;
+    height: 50dvh;
+    /*background-color: #d6882f;*/
+}
+
+#preview-canvas img,
+#preview-canvas canvas {
+    display: block;
+    width: 100%;
+    /*height:100%*/
+    object-fit: contain;
+    border-radius: 1rem;
+}
+
+/*-----------------------------------------
+bauen------------------------------------*/
+#progress-bar{
+    background-color: var(--background-color);
+    width: 95%;
+    height: 1rem;
+    align-self: center;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+#progress-bar-fill{
+    height: 100%;
+    width: 0%;
+    background-color: #117E2F; /* gleiches Grün wie der "correct"-Glow in live_view.js */
+    border-radius: 999px;
+    transition: width 0.35s ease;
+}
+
+#main-tree-window{
+    flex: 1;
+}
+
+#main-tree-canvas,
+#comparison-tree-canvas{
+    width: 100%;
+    height: 100%;
+    
+
+}
+
+/* .tree-container is height:fit-content, so without content the canvas
+   would collapse to 0 - give the bauen tree view an explicit height
+   for the three.js renderer to fill */
+#main-tree{
+    height: 85vh;
+    margin-top: 2rem;
+}
+
+#main-tree-canvas img,
+#main-tree-canvas canvas,
+#comparison-tree-canvas img,
+#comparison-tree-canvas canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 1rem;
+}
+
+/*-----------------------------------------
+build_reference - two containers side by side, 30/70 -----------------*/
+.split-tree-container{
+    display: flex;
+    flex-direction: row;
+    gap: var(--page-padding);
+    width: 100%;
+    height: 85vh;
+    margin-top: 2rem;
+}
+
+.split-tree-container .tree-container{
+    height: 100%;
+    min-width: 0; /* flex children default to min-width:auto, which can overflow */
+    cursor: pointer;
+    transition: flex 0.35s ease;
+}
+
+/* flex-grow ratios (not fixed %) so the gap between them is handled
+   correctly instead of causing overflow */
+#comparison-tree{
+    flex: 3;
+}
+
+#main-tree-compare{
+    flex: 7;
+}
+
+/* tap/click a side to expand it (see split_toggle.js) */
+.split-tree-container.left-expanded #comparison-tree{
+    flex: 7;
+}
+
+.split-tree-container.left-expanded #main-tree-compare{
+    flex: 3;
+}
+
+#bauen-target-canvas{
+    width: 50vh;
+
+}

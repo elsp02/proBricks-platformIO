@@ -1,0 +1,49 @@
+// =====================================================================
+// serial_writing.h
+// - payload building, shared by baseplate and brick 
+// - payload-change tracking and PC-frame sending: baseplate only
+// currently not used:
+//- buffered debug log, used when SERIAL_DEBUG_END is active (config.h)
+// =====================================================================
+#ifndef SERIAL_WRITING_H
+#define SERIAL_WRITING_H
+
+#include <Arduino.h>
+#include <avr/io.h>
+#include <stdint.h>
+#include <stdbool.h>
+
+#include "config.h"
+
+bool payload_changed(const uint8_t *payload, uint8_t payload_len);  // true if payload differs from the last one remembered
+
+void remember_sent_payload(const uint8_t *payload, uint8_t payload_len); // stores payload as the new "last sent" baseline
+
+void build_payload( // combines every responded child's payload into one payload;
+    uint8_t *payload,                        // brick builds: prefixes NODE_ID | ORIENTATION | CHILD_MASK and sets child_mask bits
+    uint8_t &payload_len,
+    const bool *child_done,
+    const uint8_t child_payload[][MAX_CHILD_PAYLOAD_LEN],
+    const uint8_t *child_payload_len
+    #if !defined(CUBE_TYPE_BASEPLATE)
+    , uint8_t orientation_mask
+    #endif
+);
+
+void send_payload_to_pc(const uint8_t *payload, uint8_t payload_len); // sends the built DATA FRAME with SYNC | LEN | PAYLOAD | CHECKSUM to the PC
+
+void print_payload_hex(const uint8_t *payload, uint8_t len); // prints payload_len and payload as space-separated hex bytes over Serial
+
+//------------------------------
+// error message buffer for SERIAL_DEBUG_END
+// -> currently not in use somewhere (alternative: SERIAL_DEBUG)
+//------------------------------
+void log_reset(void);
+void log_append(const char *message);
+void log_appendln(const char *message);
+
+void log_append(uint32_t value, uint8_t base);
+void log_appendln(uint32_t value, uint8_t base);
+
+void log_flush(void);
+#endif
